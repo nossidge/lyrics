@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+# Encoding: UTF-8
+
+################################################################################
+# Get lyrics for a certain song from genius.com
+# Arguments are the artist, then the song.
+# If it cannot find either, it will fail silently.
+################################################################################
+# Example command:
+#   lyrics 'the beatles' 'hey jude'
+################################################################################
+
+require 'genius'
+require 'open-uri'
+require 'nokogiri'
+
+################################################################################
+
+Genius.access_token = ENV['GENIUS_ACCESS_TOKEN']
+
+# Find a song by artist and song title.
+# Find all songs that match by title, then loop
+#   through until one matches the artist.
+def artist_song artist, song_title
+  song_details = nil
+  Genius::Song.search(song_title).each do |song|
+    if song.primary_artist.name.downcase == artist.downcase
+      song_details = song
+      break
+    end
+  end
+  song_details
+end
+
+# Get lyrics of song from Genius' web HTTP using Nokogiri.
+def song_lyrics artist, song_title
+  song = artist_song(artist, song_title)
+  return nil if song.nil?
+  page = Nokogiri::HTML(open(song.url).read)
+  page.css('div.lyrics').map do |div|
+    div.text.strip.split("\n")
+  end
+end
+
+################################################################################
+
+puts song_lyrics ARGV[0], ARGV[1]
+
+################################################################################
