@@ -36,8 +36,9 @@ end
 def song_lyrics artist, song_title
   song = artist_song(artist, song_title)
   return nil if song.nil?
-  page = Nokogiri::HTML(open(song.url).read)
-  page.css('div.lyrics').map do |div|
+  page = open(song.url, {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}).read
+  html = Nokogiri::HTML(page)
+  html.css('div.lyrics').map do |div|
     div.text.strip.split("\n")
   end
 end

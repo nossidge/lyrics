@@ -2,7 +2,7 @@
 
 by Paul Thompson - nossidge@gmail.com
 
-A tiny, simple CLI script to get lyrics from genius.com.
+A tiny, simple CLI script to get lyrics from www.genius.com
 
 
 ## Installation
